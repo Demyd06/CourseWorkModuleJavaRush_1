@@ -1,80 +1,59 @@
-import java.util.Scanner;
+import chekedCommands.CommandsParser;
+import constants.Commands;
+import crypters.Bruteforce;
+import crypters.Decrypter;
+import crypters.Encrypter;
+import files.FileManager;
+import files.Options;
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 public class Main {
-    private static final char[] litters = new char[]{
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-            'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-            'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-            'w', 'x', 'y', 'z'
-    };
-    private static final Scanner SCANNER = new Scanner(System.in);
-    private static final StringBuilder BUILDER = new StringBuilder();
-
     public static void main(String[] args) {
-        printScan();
-    }
+        Bruteforce bruteforce = new Bruteforce();
+        Encrypter enc = new Encrypter();
+        Decrypter dec = new Decrypter();
+        FileManager fm = new FileManager();
+        CommandsParser commandsParser = new CommandsParser();
+        Options options = commandsParser.parse(args);
 
-    public static void printScan() {
-        System.out.println("Enter number 1 (Encrypt) or 2 (Decrypt): ");
-        int number = SCANNER.nextInt();
-        SCANNER.nextLine();
+        try {
+            if (options.getCommand() == Commands.ENCRYPT) {
+                String content = fm.read(options.getFilePath());
+                String encryptedContent = enc.Encrypter(content, options.getKey());
+                String fileName = options.getFilePath().getFileName().toString();
+                String newFileName = fileName.substring(0, fileName.length() - 4) + " [ENCRYPTED].txt";
 
-        switch (number) {
-            case 1 -> {
-                encrypterText(BUILDER, litters);
-                printScan();
+                Path newFilePath = options.getFilePath().resolveSibling(newFileName);
+                fm.write(newFilePath, encryptedContent);
             }
-            case 2 -> {
-                decrypterText(BUILDER, litters);
-                printScan();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } try {
+            if (options.getCommand() == Commands.DECRYPT) {
+                String content = fm.read(options.getFilePath());
+                String decryptedContent = dec.Decrypt(content, options.getKey());
+                String fileName = options.getFilePath().getFileName().toString();
+                String newFileName = fileName.substring(0, fileName.length() - 4) + " [DECRYPTED].txt";
+
+                Path newFilePath = options.getFilePath().resolveSibling(newFileName);
+                fm.write(newFilePath, decryptedContent);
             }
-            case 3 -> System.out.println(0);
-            default -> System.out.println("Invalid option. Try again.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } try {
+            if (options.getCommand() == Commands.BRUTEFORCE) {
+                String content = fm.read(options.getFilePath());
+                String BruteForceContent = bruteforce.BruteForceDecrypted(content);
+                String fileName = options.getFilePath().getFileName().toString();
+                String newFileName = fileName.substring(0, fileName.length() - 4) + " [BRUTEFORCE].txt";
+
+                Path newFilePath = options.getFilePath().resolveSibling(newFileName);
+                fm.write(newFilePath, BruteForceContent);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
-    }
-
-    public static void decrypterText(StringBuilder BUILDER, char[] litters) {
-        System.out.println("Enter shift (index): ");
-        int count = SCANNER.nextInt();
-
-        String encryptedText = BUILDER.toString();
-        BUILDER.setLength(0);
-
-        for (int i = 0; i < encryptedText.length(); i++) {
-            int index = new String(litters).indexOf(encryptedText.charAt(i));
-            if (index != -1) { // Перевіряємо, чи символ є в масиві litters
-                int newIndex = (index - count) % litters.length;
-                if (newIndex < 0) {
-                    newIndex += litters.length; // Виправлення для негативних індексів
-                }
-                BUILDER.append(litters[newIndex]);
-            } else {
-                BUILDER.append(encryptedText.charAt(i)); // Якщо символ не знайдено, додаємо його без змін
-            }
-        }
-
-        System.out.println("Decrypted text: " + BUILDER);
-    }
-
-    public static void encrypterText(StringBuilder BUILDER, char[] litters) {
-        BUILDER.setLength(0);
-
-        System.out.println("Enter a string: ");
-        String text = SCANNER.nextLine();
-        System.out.println("Enter shift (index): ");
-        int count = SCANNER.nextInt();
-
-        for (int i = 0; i < text.length(); i++) {
-            int index = new String(litters).indexOf(text.charAt(i));
-            if (index != -1) { // Перевіряємо, чи символ є в масиві litters
-                int newIndex = (index + count) % litters.length;
-                BUILDER.append(litters[newIndex]);
-            } else {
-                BUILDER.append(text.charAt(i)); // Якщо символ не знайдено, додаємо його без змін
-            }
-        }
-
-        System.out.println("Encrypted text: " + BUILDER);
     }
 }
