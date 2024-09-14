@@ -38,8 +38,8 @@ public class CommandsParser {
 
         if (command == null) {throw new IllegalArgumentException("Command (-e, -d, or -bf) is required");}
 
-        //if (key == null) {throw new IllegalArgumentException("Key is required for encrypt or decrypt mode");}
-
+        if (key == null && (command == Commands.DECRYPT || command == Commands.ENCRYPT)) {throw new IllegalArgumentException("Key is required for encrypt or decrypt mode");}
+        if(key < 0){throw new IndexOutOfBoundsException("Key must be positive");}
         if (filePath == null) {throw new IllegalArgumentException("File path is required");}
 
         return new Options(command, filePath, key);

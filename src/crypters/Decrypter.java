@@ -8,15 +8,15 @@ public class Decrypter {
 
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
-            if(Language.english.contains(ch)) {
-                int index = Language.english.indexOf(ch);
-                int newIndex = (index - key) % Language.english.size();
+            if(Language.ENGLISH.contains(ch)) {
+                int index = Language.ENGLISH.indexOf(ch);
+                int newIndex = (index - key) % Language.ENGLISH.size();
 
                 if(newIndex < 0){
-                    newIndex += Language.english.size();
+                    newIndex += Language.ENGLISH.size();
                 }
 
-                decryptBuilder.append(Language.english.get(newIndex));
+                decryptBuilder.append(Language.ENGLISH.get(newIndex));
             }else{
                 decryptBuilder.append(ch);
             }

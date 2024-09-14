@@ -1,6 +1,5 @@
 package crypters;
 
-import constants.CommonWords;
 import constants.Language;
 
 public class Bruteforce {
@@ -16,7 +15,7 @@ public class Bruteforce {
             String decrypted = decrypter.Decrypt(input, key);
             int score = countCommonWords(decrypted);
 
-            // Якщо текст має більше типових слів, запам'ятовуємо його як найкращий варіант
+
             if (score > bestScore) {
                 bestScore = score;
                 bestMatch = decrypted;
@@ -32,7 +31,7 @@ public class Bruteforce {
         int count = 0;
         String[] words = text.toLowerCase().split("\\s+");
         for (String word : words) {
-            if (CommonWords.COMMON_ENGLISH_WORDS.contains(word)) {
+            if (Language.COMMON_ENGLISH_WORDS.contains(word)) {
                 count++;
             }
         }
