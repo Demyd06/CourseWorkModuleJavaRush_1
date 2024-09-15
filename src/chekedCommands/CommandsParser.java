@@ -8,7 +8,11 @@ import java.nio.file.Path;
 
 public class CommandsParser {
     public static Options parse(String[] args) {
-        return checked(null, null, null, args);
+        Commands command = null;
+        Integer key = null;
+        Path file = null;
+
+        return checked(command, file, key, args);
     }
     private static Options checked(Commands command, Path filePath, Integer key, String [] args){
         for (int index = 0; index < args.length; index++) {
@@ -39,7 +43,7 @@ public class CommandsParser {
         if (command == null) {throw new IllegalArgumentException("Command (-e, -d, or -bf) is required");}
 
         if (key == null && (command == Commands.DECRYPT || command == Commands.ENCRYPT)) {throw new IllegalArgumentException("Key is required for encrypt or decrypt mode");}
-        if(key < 0){throw new IndexOutOfBoundsException("Key must be positive");}
+        if(key != null && key < 0){throw new IndexOutOfBoundsException("Key must be positive");}
         if (filePath == null) {throw new IllegalArgumentException("File path is required");}
 
         return new Options(command, filePath, key);
